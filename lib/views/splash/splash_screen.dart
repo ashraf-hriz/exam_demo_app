@@ -1,10 +1,15 @@
+import 'package:exam_demo_app/providers/auth_provider.dart';
 import 'package:exam_demo_app/views/splash/first_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:provider/provider.dart';
 
+import '../../core/constants.dart';
 import '../../core/helper.dart';
+import '../admin/admin_home_screen.dart';
+import '../student/student_home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,21 +24,29 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 4), () {
+    Future.delayed(const Duration(seconds: 4), () async {
       if (firebaseAuth.currentUser != null) {
+        //firebaseAuth.signOut();
         //push(context, FirstScreen());
+         var provider = Provider.of<AuthProvider>(context, listen: false);
+        await provider.getUserData();
+
+        currentUser.type!.toLowerCase() == 'admin'
+            ? pushAndRemoveUntil(navigatorKey.currentState!.context, const AdminHomeScreen(),false)
+            : pushAndRemoveUntil(
+                navigatorKey.currentState!.context, const StudentHomeScreen(),false);
       } else {
-        push(context, const FirstScreen());
-      }
+        pushAndRemoveUntil(context, const FirstScreen(),false);
+      } 
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (mounted){
-      setState(() {
-        _isVisible = true;
-      });
-    }
-  });
+      if (mounted) {
+        setState(() {
+          _isVisible = true;
+        });
+      }
+    });
   }
 
   @override
@@ -47,8 +60,8 @@ class _SplashScreenState extends State<SplashScreen> {
         height: h,
         alignment: Alignment.center,
         child: Container(
-          decoration: new BoxDecoration(
-            gradient: new LinearGradient(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
               colors: [
                 Theme.of(context).accentColor,
                 Theme.of(context).primaryColor
@@ -77,7 +90,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         spreadRadius: 2.0,
                       )
                     ]),
-                child:  const Center(
+                child: const Center(
                   child: ClipOval(
                     child: Icon(
                       Icons.flutter_dash_outlined,

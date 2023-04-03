@@ -40,6 +40,21 @@ class ThemeHelper {
     ]);
   }
 
+  static BoxDecoration inputBoxDecorationShaddowBorder() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(100.0),
+      border: Border.all(color: Colors.grey.shade400),
+          
+      boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 20,
+        offset: const Offset(0, 5),
+      )
+    ]);
+  }
+
   static BoxDecoration buttonBoxDecoration(BuildContext context,
       [String color1 = "", String color2 = ""]) {
     Color c1 = Theme.of(context).primaryColor;
