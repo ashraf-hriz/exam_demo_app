@@ -1,20 +1,17 @@
-import 'package:exam_demo_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../repositories/exam_repository.dart';
 import '../widgets/exam_tile.dart';
 
-class StudentHomeScreen extends StatefulWidget {
-  const StudentHomeScreen({super.key});
+class AllExamsScreen extends StatefulWidget {
+  const AllExamsScreen({super.key});
 
   @override
-  State<StudentHomeScreen> createState() => _StudentHomeScreenState();
+  State<AllExamsScreen> createState() => _AllExamsScreenState();
 }
 
-class _StudentHomeScreenState extends State<StudentHomeScreen> {
-
-  late Stream examStream;
+class _AllExamsScreenState extends State<AllExamsScreen> {
+  late Stream quizStream;
 
   bool _isLoading = true;
 
@@ -22,7 +19,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       child: StreamBuilder(
-        stream: examStream,
+        stream: quizStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(
@@ -67,32 +64,28 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
 
   @override
   void initState() {
-     // TODO: implement initState
-    super.initState();
-    ExamRepository.getExamDataForStudent().then((value) {
+    ExamRepository.getExamData().then((value) {
       setState(() {
-        examStream = value;
+        quizStream = value;
         _isLoading = false;
       });
     });
-   
+    // TODO: implement initState
+    super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        title: Text(
-          '${currentUser.fName} ${currentUser.lName}',
+        title: const Text(
+          'Exams',
           style: TextStyle(color: Colors.white),
         ),
-        actions: [
-          IconButton(onPressed: (){
-            Provider.of<AuthProvider>(context,listen: false).logOut();
-          }, icon: const Icon(Icons.logout_outlined,color: Colors.white,)),
-        ],
+        iconTheme: const IconThemeData(color: Colors.black87),
+        backgroundColor: Theme.of(context).primaryColor,
       ),
-      body:   _isLoading
+      body: _isLoading
           ? Container(
               child: const Center(child: CircularProgressIndicator()),
             )
